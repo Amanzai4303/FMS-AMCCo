@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMCC FMS | {% block title %}Dashboard{% endblock %}</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --sidebar-active: #1e3a5f;
+            --navbar-bg: #ffffff;
+            --navbar-border: #e2e8f0;
+            --primary: #3b82f6;
+            --primary-light: #eff6ff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --bg-page: #f1f5f9;
+            --card-bg: #ffffff;
+            --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            --card-shadow-hover: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --sidebar-width-collapsed: 68px;
+            --sidebar-width-expanded: 240px;
+            --navbar-height: 64px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-dark);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--navbar-height);
+            background: var(--navbar-bg);
+            border-bottom: 1px solid var(--navbar-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .burger-btn {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .burger-btn:hover {
+            background: var(--bg-page);
+        }
+        .branding {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-dark);
+        }
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #fff;
+        }
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .date-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: var(--bg-page);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 12px 4px 4px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .user-profile:hover {
+            background: var(--bg-page);
+        }
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .user-info {
+            line-height: 1.3;
+        }
+        .user-info .name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+        .user-info .role {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .logout-btn:hover {
+            color: var(--danger);
+            background: #fef2f2;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width-collapsed);
+            background: var(--sidebar-bg);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar.expanded {
+            width: var(--sidebar-width-expanded);
+        }
+        .sidebar-menu {
+            padding: 16px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+        }
+        .sidebar-menu::-webkit-scrollbar {
+            width: 3px;
+        }
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: var(--text-light);
+            cursor: pointer;
+            white-space: nowrap;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none !important;
+            margin-bottom: 1px;
+        }
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: #e2e8f0;
+            text-decoration: none;
+        }
+        .menu-item.active {
+            background: var(--sidebar-active);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .menu-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+        .menu-label {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .sidebar.expanded .menu-label {
+            opacity: 1;
+        }
+        .expand-arrow {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+            font-size: 0.6rem;
+            opacity: 0;
+        }
+        .sidebar.expanded .expand-arrow {
+            opacity: 1;
+        }
+        .expand-arrow.rotate {
+            transform: rotate(180deg);
+        }
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin: 2px 0;
+        }
+        .submenu.open {
+            max-height: 100px;
+        }
+        .submenu .menu-item {
+            padding-left: 44px;
+            font-size: 0.8rem;
+        }
+        .sidebar-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width-collapsed);
+            margin-top: var(--navbar-height);
+            padding: 28px 32px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: calc(100vh - var(--navbar-height));
+        }
+        .main-content.sidebar-expanded {
+            margin-left: var(--sidebar-width-expanded);
+        }
+
+        /* ========== SIDEBAR OVERLAY ========== */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--navbar-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 998;
+        }
+        .sidebar-overlay.visible {
+            display: block;
+        }
+
+        /* ========== MOBILE ========== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 0;
+            }
+            .sidebar.expanded {
+                width: var(--sidebar-width-expanded);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .main-content.sidebar-expanded {
+                margin-left: var(--sidebar-width-expanded);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <button class="burger-btn" id="burgerBtn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="branding">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-hard-hat"></i>
+                </div>
+                <div>
+                    <div>AMCC FMS</div>
+                    <div style="font-size:0.65rem;opacity:0.5;font-weight:400;">Arman Maihan Construction Co.</div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <div class="date-display">
+                <i class="fa-regular fa-calendar"></i>
+                <span id="afghanDate">{{ afghan_date }}</span>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar">{{ user.username.0|upper }}</div>
+                <div class="user-info">
+                    <div class="name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="role">{% if user.is_superuser %}Admin{% else %}Finance Manager{% endif %}</div>
+                </div>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" title="Logout" class="logout-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== SIDEBAR OVERLAY ========== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-menu">
+            <a href="{% url 'dashboard' %}" class="menu-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-table-columns menu-icon"></i>
+                <span class="menu-label">Dashboard</span>
+            </a>
+            <a href="{% url 'project_list' %}" class="menu-item {% if 'project' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-building menu-icon"></i>
+                <span class="menu-label">Projects</span>
+            </a>
+            <a href="{% url 'expense_list' %}" class="menu-item {% if 'expense' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-file-invoice menu-icon"></i>
+                <span class="menu-label">Expenses</span>
+            </a>
+            <div class="menu-item" id="cashflowParent">
+                <i class="fa-solid fa-money-bill-transfer menu-icon"></i>
+                <span class="menu-label">Cash Flow</span>
+                <i class="fa-solid fa-chevron-down expand-arrow"></i>
+            </div>
+            <div class="submenu" id="cashflowSubmenu">
+                <a href="{% url 'cashin_list' %}" class="menu-item {% if 'cashin' in request.path %}active{% endif %}">
+                    <i class="fa-solid fa-circle-arrow-down text-success menu-icon"></i>
+                    <span class="menu-label">Cash IN</span>
+                </a>
+                <a href="{% url 'cashout_list' %}" class="menu-item {% if 'cashout' in request.path %}active{% endif %}">
+                    <i class="fa-solid fa-circle-arrow-up text-danger menu-icon"></i>
+                    <span class="menu-label">Cash OUT</span>
+                </a>
+            </div>
+            <a href="{% url 'report_list' %}" class="menu-item {% if 'report' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-chart-bar menu-icon"></i>
+                <span class="menu-label">Reports</span>
+            </a>
+        </nav>
+        {% if user.is_superuser %}
+        <div class="sidebar-bottom">
+            <a href="{% url 'admin:index' %}" class="menu-item {% if 'admin' in request.path %}active{% endif %}">
+                <i class="fa-solid fa-gear menu-icon"></i>
+                <span class="menu-label">Settings</span>
+            </a>
+        </div>
+        {% endif %}
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content" id="mainContent">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const burgerBtn = document.getElementById('burgerBtn');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('sidebarOverlay');
+            let expanded = false;
+
+            function expand() {
+                sidebar.classList.add('expanded');
+                mainContent.classList.add('sidebar-expanded');
+                if (overlay) overlay.classList.add('visible');
+                expanded = true;
+            }
+            function collapse() {
+                sidebar.classList.remove('expanded');
+                mainContent.classList.remove('sidebar-expanded');
+                if (overlay) overlay.classList.remove('visible');
+                expanded = false;
+            }
+            burgerBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (expanded) collapse();
+                else expand();
+            });
+            document.addEventListener('click', function(e) {
+                if (expanded && !sidebar.contains(e.target) && e.target !== burgerBtn) {
+                    collapse();
+                }
+            });
+
+            const cashflowParent = document.getElementById('cashflowParent');
+            const cashflowSubmenu = document.getElementById('cashflowSubmenu');
+            const cashflowArrow = cashflowParent ? cashflowParent.querySelector('.expand-arrow') : null;
+
+            if (cashflowParent) {
+                cashflowParent.addEventListener('click', function(e) {
+                    if (e.target === cashflowParent || e.target.closest('.menu-item') === cashflowParent) {
+                        e.stopPropagation();
+                        if (!expanded) expand();
+                        cashflowSubmenu.classList.toggle('open');
+                        if (cashflowArrow) cashflowArrow.classList.toggle('rotate');
+                    }
+                });
+            }
+
+            if (cashflowSubmenu) {
+                cashflowSubmenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const clickedLink = e.target.closest('a');
+                    if (clickedLink) {
+                        e.preventDefault();
+                        const targetUrl = clickedLink.getAttribute('href');
+                        cashflowSubmenu.classList.remove('open');
+                        if (cashflowArrow) cashflowArrow.classList.remove('rotate');
+                        collapse();
+                        setTimeout(function() {
+                            window.location.href = targetUrl;
+                        }, 150);
+                    }
+                });
+            }
+
+            const allSidebarLinks = sidebar.querySelectorAll('a.menu-item');
+            allSidebarLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    if (expanded && !link.closest('#cashflowSubmenu')) {
+                        e.preventDefault();
+                        const targetUrl = link.getAttribute('href');
+                        if (cashflowSubmenu) {
+                            cashflowSubmenu.classList.remove('open');
+                            if (cashflowArrow) cashflowArrow.classList.remove('rotate');
+                        }
+                        collapse();
+                        setTimeout(function() {
+                            window.location.href = targetUrl;
+                        }, 300);
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

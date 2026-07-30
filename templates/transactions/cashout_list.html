@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Cash OUT{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Cash OUT</h2>
+    <a href="{% url 'cashout_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Record Cash OUT</a>
+</div>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-auto">
+        <select name="project" class="form-select" onchange="this.form.submit()">
+            <option value="">All Projects</option>
+            {% for p in projects %}
+                <option value="{{ p.id }}" {% if selected_project.id == p.id %}selected{% endif %}>{{ p.code }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<table class="table table-hover bg-white shadow-sm">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Project</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Payment</th>
+            <th>Amount</th>
+            <th>Files</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in txns %}
+        <tr>
+            <td>{{ t.date_afghan }}</td>
+            <td>{{ t.project.code }}</td>
+            <td>{{ t.category.name|default:"—" }}</td>
+            <td>{{ t.description|default:"—" }}</td>
+            <td>{{ t.get_payment_method_display }}</td>
+            <td class="text-danger">AFN {{ t.amount }}</td>
+            <td>
+                {% for att in t.attachments.all %}
+                    <a href="{{ att.file.url }}"><i class="bi bi-paperclip"></i></a>
+                {% endfor %}
+            </td>
+            <td>
+                {% if user.is_superuser or user.groups.first.name == 'FinancialManager' %}
+                <a href="{% url 'cashout_edit' t.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                {% endif %}
+                {% if user.is_superuser %}
+                <a href="{% url 'transaction_delete' t.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center">No Cash OUT records.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

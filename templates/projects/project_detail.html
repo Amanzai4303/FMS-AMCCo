@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}{{ project.code }} Details{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>{{ project.code }} – {{ project.name }}</h2>
+    {% if user.is_superuser %}
+    <a href="{% url 'project_update' project.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+    {% endif %}
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0">Project Info</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Client</dt><dd class="col-sm-8">{{ project.client_name }}</dd>
+                    <dt class="col-sm-4">Location</dt><dd class="col-sm-8">{{ project.location }}</dd>
+                    <dt class="col-sm-4">Budget</dt><dd class="col-sm-8">AFN {{ project.budget|floatformat:0 }}</dd>
+                    <dt class="col-sm-4">Period</dt>
+                    <dd class="col-sm-8">{{ project.start_date_afghan }} – {{ project.end_date_afghan }}</dd>
+                    <dt class="col-sm-4">Status</dt><dd class="col-sm-8"><span class="badge bg-primary">{{ project.get_status_display }}</span></dd>
+                    <dt class="col-sm-4">Description</dt><dd class="col-sm-8">{{ project.description|linebreaks|default:"—" }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-white"><h5 class="mb-0">Financial Summary</h5></div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col"><h6 class="text-muted">Budget</h6><h4>AFN {{ project.budget|floatformat:0 }}</h4></div>
+                    <div class="col"><h6 class="text-muted">Expenses</h6><h4 class="text-danger">AFN {{ project.total_expenses|floatformat:0 }}</h4></div>
+                    <div class="col"><h6 class="text-muted">Profit/Loss</h6>
+                        <h4 class="{% if project.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            AFN {{ project.profit_loss|floatformat:0 }}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0">Documents</h5></div>
+            <div class="card-body">
+                {% if documents %}
+                    <ul class="list-group list-group-flush">
+                    {% for doc in documents %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ doc.filename }}
+                            <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-secondary" download><i class="bi bi-download"></i></a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No documents attached.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

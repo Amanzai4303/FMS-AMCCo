@@ -1,0 +1,38 @@
+# Django .gitignore
+# For a Financial Management System (AMCC FMS)
+
+# --- Virtual Environment ---
+venv/
+env/
+.venv/
+ENV/
+.env/
+
+# --- Django ---
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+/media
+/staticfiles
+
+# --- Environment variables (contains secrets) ---
+.env
+
+# --- System files ---
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# --- IDE settings ---
+.vscode/
+.idea/
+*.sublime-workspace
+
+# --- Python ---
+*.py[cod]
+*.egg-info/
+dist/
+build/

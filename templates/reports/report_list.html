@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h2 class="mb-4">Reports</h2>
+
+<!-- Report type selection -->
+<ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link {% if report_type == 'list' %}active{% endif %}" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab">Expenses & Incomes List</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link {% if report_type == 'profit_loss' %}active{% endif %}" id="pl-tab" data-bs-toggle="tab" data-bs-target="#profit_loss" type="button" role="tab">Project Profit/Loss</button>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <!-- List Report -->
+    <div class="tab-pane fade {% if report_type == 'list' %}show active{% endif %}" id="list" role="tabpanel">
+        <form method="get" class="row g-3 mb-4" action="{% url 'report_list' %}">
+            <input type="hidden" name="type" value="list">
+            <div class="col-md-3">
+                <label class="form-label">Project</label>
+                <select name="project" class="form-select">
+                    <option value="">All Projects</option>
+                    {% for p in projects %}
+                        <option value="{{ p.id }}" {% if selected_project and selected_project.id == p.id %}selected{% endif %}>{{ p.code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">From Date</label>
+                <input type="date" name="from_date" class="form-control" value="{{ from_date|default:'' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">To Date</label>
+                <input type="date" name="to_date" class="form-control" value="{{ to_date|default:'' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Type</label>
+                <select name="txn_type" class="form-select">
+                    <option value="">All</option>
+                    <option value="IN" {% if txn_type == 'IN' %}selected{% endif %}>Cash IN</option>
+                    <option value="OUT" {% if txn_type == 'OUT' %}selected{% endif %}>Cash OUT</option>
+                </select>
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Filter</button>
+            </div>
+        </form>
+
+        {% if transactions %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5>Results</h5>
+                <a href="{% url 'report_pdf' %}?type=list{% if selected_project %}&project={{ selected_project.id }}{% endif %}&from_date={{ from_date|default:'' }}&to_date={{ to_date|default:'' }}&txn_type={{ txn_type|default:'' }}" class="btn btn-outline-danger"><i class="bi bi-file-pdf"></i> Download PDF</a>
+            </div>
+            <div class="table-responsive bg-white shadow-sm rounded">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>Project</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td>{{ t.date_afghan }}</td>
+                            <td>{{ t.created_by.get_full_name|default:t.created_by.username }}</td>
+                            <td>{{ t.project.code }}</td>
+                            <td><span class="badge {% if t.type == 'IN' %}bg-success{% else %}bg-danger{% endif %}">{{ t.get_type_display }}</span></td>
+                            <td>{{ t.category.name|default:"—" }}</td>
+                            <td>{{ t.description|truncatechars:30 }}</td>
+                            <td class="{% if t.type == 'IN' %}text-success{% else %}text-danger{% endif %}">AFN {{ t.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light fw-bold">
+                        <tr>
+                            <td colspan="6" class="text-end">Total Income:</td>
+                            <td class="text-success">AFN {{ total_income }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-end">Total Expenses:</td>
+                            <td class="text-danger">AFN {{ total_expenses }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-end">Net:</td>
+                            <td class="{% if profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">AFN {{ profit_loss }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">No transactions found for the selected filters.</div>
+        {% endif %}
+    </div>
+
+    <!-- Profit/Loss Report -->
+    <div class="tab-pane fade {% if report_type == 'profit_loss' %}show active{% endif %}" id="profit_loss" role="tabpanel">
+        <form method="get" class="row g-3 mb-4" action="{% url 'report_list' %}">
+            <input type="hidden" name="type" value="profit_loss">
+            <div class="col-md-3">
+                <label class="form-label">Project</label>
+                <select name="project" class="form-select">
+                    <option value="">All Projects</option>
+                    {% for p in projects %}
+                        <option value="{{ p.id }}" {% if selected_project and selected_project.id == p.id %}selected{% endif %}>{{ p.code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Filter</button>
+            </div>
+        </form>
+
+        {% if profit_loss_data %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5>Project Profit / Loss Statement</h5>
+                <a href="{% url 'report_pdf' %}?type=profit_loss{% if selected_project %}&project={{ selected_project.id }}{% endif %}" class="btn btn-outline-danger">"><i class="bi bi-file-pdf"></i> Download PDF</a>
+            </div>
+            <div class="table-responsive bg-white shadow-sm rounded">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Budget</th>
+                            <th>Income</th>
+                            <th>Expenses</th>
+                            <th>Profit / Loss</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in profit_loss_data %}
+                        <tr>
+                            <td>{{ row.code }} - {{ row.name }}</td>
+                            <td>AFN {{ row.budget }}</td>
+                            <td>AFN {{ row.income }}</td>
+                            <td>AFN {{ row.expenses }}</td>
+                            <td class="{% if row.profit_loss >= 0 %}text-success{% else %}text-danger{% endif %}">AFN {{ row.profit_loss }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light fw-bold">
+                        <tr>
+                            <td>Totals</td>
+                            <td>AFN {{ total_budget }}</td>
+                            <td>AFN {{ total_income_all }}</td>
+                            <td>AFN {{ total_expenses_all }}</td>
+                            <td>AFN {{ net_all }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">No data to display.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Expenses{% endblock %}
+{% block content %}
+<h2>Expenses</h2>
+<form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-auto">
+        <label class="form-label">Select Project</label>
+        <select name="project" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Choose project --</option>
+            {% for p in projects %}
+                <option value="{{ p.id }}" {% if selected_project and selected_project.id == p.id %}selected{% endif %}>{{ p.code }} - {{ p.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% if selected_project %}
+    <div class="col-auto">
+        <a href="{% url 'cashout_create' %}?project={{ selected_project.id }}" class="btn btn-primary"><i class="bi bi-plus"></i> Add Expense</a>
+    </div>
+    {% endif %}
+</form>
+
+{% if selected_project %}
+    <h5 class="mb-3">{{ selected_project.code }} – Total Expenses: AFN {{ total_expenses|floatformat:0 }}</h5>
+    {% for group in categories_totals %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <strong>{{ group.category }}</strong>
+                <span class="float-end text-muted">AFN {{ group.total|floatformat:0 }}</span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Payment</th>
+                            <th>Amount</th>
+                            <th>Files</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in group.transactions %}
+                        <tr>
+                            <td>{{ t.date_afghan }}</td>
+                            <td>{{ t.description|default:"—" }}</td>
+                            <td>{{ t.get_payment_method_display }}</td>
+                            <td class="text-danger">AFN {{ t.amount }}</td>
+                            <td>
+                                {% for att in t.attachments.all %}
+                                    <a href="{{ att.file.url }}" target="_blank" class="text-decoration-none"><i class="bi bi-paperclip"></i> {{ forloop.counter }}</a>
+                                {% empty %}—
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if user.is_superuser or user.groups.first.name == 'FinancialManager' %}
+                                <a href="{% url 'cashout_edit' t.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                                {% endif %}
+                                {% if user.is_superuser %}
+                                <a href="{% url 'transaction_delete' t.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-info">No expenses recorded for this project.</div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">Please select a project to view its expenses.</div>
+{% endif %}
+{% endblock %}
