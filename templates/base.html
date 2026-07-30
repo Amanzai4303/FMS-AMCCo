@@ -7,6 +7,8 @@
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Bootstrap Icons – required for bi-* icon classes -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -30,6 +32,7 @@
             --sidebar-width-collapsed: 68px;
             --sidebar-width-expanded: 240px;
             --navbar-height: 64px;
+            --mid-blue: #6A97C0;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -406,87 +409,88 @@
 
     <!-- ========== SCRIPTS ========== -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const burgerBtn = document.getElementById('burgerBtn');
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const overlay = document.getElementById('sidebarOverlay');
-            let expanded = false;
+    document.addEventListener('DOMContentLoaded', function() {
+        const burgerBtn = document.getElementById('burgerBtn');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const overlay = document.getElementById('sidebarOverlay');
+        let expanded = false;
 
-            function expand() {
-                sidebar.classList.add('expanded');
-                mainContent.classList.add('sidebar-expanded');
-                if (overlay) overlay.classList.add('visible');
-                expanded = true;
+        function expand() {
+            sidebar.classList.add('expanded');
+            mainContent.classList.add('sidebar-expanded');
+            if (overlay) overlay.classList.add('visible');
+            expanded = true;
+        }
+        function collapse() {
+            sidebar.classList.remove('expanded');
+            mainContent.classList.remove('sidebar-expanded');
+            if (overlay) overlay.classList.remove('visible');
+            expanded = false;
+        }
+        burgerBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (expanded) collapse();
+            else expand();
+        });
+        document.addEventListener('click', function(e) {
+            if (expanded && !sidebar.contains(e.target) && e.target !== burgerBtn) {
+                collapse();
             }
-            function collapse() {
-                sidebar.classList.remove('expanded');
-                mainContent.classList.remove('sidebar-expanded');
-                if (overlay) overlay.classList.remove('visible');
-                expanded = false;
-            }
-            burgerBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (expanded) collapse();
-                else expand();
-            });
-            document.addEventListener('click', function(e) {
-                if (expanded && !sidebar.contains(e.target) && e.target !== burgerBtn) {
-                    collapse();
+        });
+
+        const cashflowParent = document.getElementById('cashflowParent');
+        const cashflowSubmenu = document.getElementById('cashflowSubmenu');
+        const cashflowArrow = cashflowParent ? cashflowParent.querySelector('.expand-arrow') : null;
+
+        if (cashflowParent) {
+            cashflowParent.addEventListener('click', function(e) {
+                if (e.target === cashflowParent || e.target.closest('.menu-item') === cashflowParent) {
+                    e.stopPropagation();
+                    if (!expanded) expand();
+                    cashflowSubmenu.classList.toggle('open');
+                    if (cashflowArrow) cashflowArrow.classList.toggle('rotate');
                 }
             });
+        }
 
-            const cashflowParent = document.getElementById('cashflowParent');
-            const cashflowSubmenu = document.getElementById('cashflowSubmenu');
-            const cashflowArrow = cashflowParent ? cashflowParent.querySelector('.expand-arrow') : null;
+        // Submenu links – navigate directly, no artificial delay
+        if (cashflowSubmenu) {
+            cashflowSubmenu.addEventListener('click', function(e) {
+                const clickedLink = e.target.closest('a');
+                if (clickedLink) {
+                    e.preventDefault();
+                    const targetUrl = clickedLink.getAttribute('href');
+                    cashflowSubmenu.classList.remove('open');
+                    if (cashflowArrow) cashflowArrow.classList.remove('rotate');
+                    // Collapse if expanded (on mobile), then navigate instantly
+                    collapse();
+                    window.location.href = targetUrl;
+                }
+            });
+        }
 
-            if (cashflowParent) {
-                cashflowParent.addEventListener('click', function(e) {
-                    if (e.target === cashflowParent || e.target.closest('.menu-item') === cashflowParent) {
-                        e.stopPropagation();
-                        if (!expanded) expand();
-                        cashflowSubmenu.classList.toggle('open');
-                        if (cashflowArrow) cashflowArrow.classList.toggle('rotate');
-                    }
-                });
-            }
+        // Regular sidebar links – navigate instantly after collapse (no timeout)
+        const allSidebarLinks = sidebar.querySelectorAll('a.menu-item');
+        allSidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                // Ignore submenu links (handled separately)
+                if (link.closest('#cashflowSubmenu')) return;
 
-            if (cashflowSubmenu) {
-                cashflowSubmenu.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const clickedLink = e.target.closest('a');
-                    if (clickedLink) {
-                        e.preventDefault();
-                        const targetUrl = clickedLink.getAttribute('href');
+                if (expanded) {
+                    e.preventDefault();
+                    const targetUrl = link.getAttribute('href');
+                    if (cashflowSubmenu) {
                         cashflowSubmenu.classList.remove('open');
                         if (cashflowArrow) cashflowArrow.classList.remove('rotate');
-                        collapse();
-                        setTimeout(function() {
-                            window.location.href = targetUrl;
-                        }, 150);
                     }
-                });
-            }
-
-            const allSidebarLinks = sidebar.querySelectorAll('a.menu-item');
-            allSidebarLinks.forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    if (expanded && !link.closest('#cashflowSubmenu')) {
-                        e.preventDefault();
-                        const targetUrl = link.getAttribute('href');
-                        if (cashflowSubmenu) {
-                            cashflowSubmenu.classList.remove('open');
-                            if (cashflowArrow) cashflowArrow.classList.remove('rotate');
-                        }
-                        collapse();
-                        setTimeout(function() {
-                            window.location.href = targetUrl;
-                        }, 300);
-                    }
-                });
+                    collapse();
+                    window.location.href = targetUrl;
+                }
             });
         });
-    </script>
+    });
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

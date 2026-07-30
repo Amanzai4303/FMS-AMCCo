@@ -121,7 +121,7 @@
         {% if profit_loss_data %}
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5>Project Profit / Loss Statement</h5>
-                <a href="{% url 'report_pdf' %}?type=profit_loss{% if selected_project %}&project={{ selected_project.id }}{% endif %}" class="btn btn-outline-danger">"><i class="bi bi-file-pdf"></i> Download PDF</a>
+                    <a href="{% url 'report_pdf' %}?type=profit_loss{% if selected_project %}&project={{ selected_project.id }}{% endif %}" class="btn btn-outline-danger"><i class="bi bi-file-pdf"></i> Download PDF</a>
             </div>
             <div class="table-responsive bg-white shadow-sm rounded">
                 <table class="table table-hover mb-0">

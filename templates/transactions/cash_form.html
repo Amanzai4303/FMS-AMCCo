@@ -20,12 +20,8 @@
                             {{ form.project }}
                             {% if form.project.errors %}<div class="text-danger small mt-1">{{ form.project.errors|striptags }}</div>{% endif %}
                         </div>
-                        <!-- Date -->
-                        <div class="col-md-6">
-                            <label for="{{ form.date.id_for_label }}" class="form-label fw-semibold">Date *</label>
-                            {{ form.date }}
-                            {% if form.date.errors %}<div class="text-danger small mt-1">{{ form.date.errors|striptags }}</div>{% endif %}
-                        </div>
+
+                        <!-- Date – only one field -->
                         <div class="col-md-6">
                             <label for="{{ form.date.id_for_label }}" class="form-label fw-semibold">Date *</label>
                             {{ form.date }}
