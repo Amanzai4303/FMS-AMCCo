@@ -42,14 +42,12 @@
                     <a href="{{ att.file.url }}"><i class="bi bi-paperclip"></i></a>
                 {% endfor %}
             </td>
-            <td>
-                {% if user.is_superuser or user.groups.filter(name='FinancialManager').exists %}
-                <a href="{% url 'cashin_edit' t.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
-                {% endif %}
-                {% if user.is_superuser %}
-                <a href="{% url 'transaction_delete' t.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                {% endif %}
-            </td>
+                <td>
+                    {% if user.is_superuser %}
+                    <a href="{% url 'cashin_edit' t.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                    <a href="{% url 'transaction_delete' t.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                    {% endif %}
+                </td>
         </tr>
         {% empty %}
         <tr><td colspan="7" class="text-center">No Cash IN records.</td></tr>
