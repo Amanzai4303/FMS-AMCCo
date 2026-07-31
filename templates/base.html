@@ -316,37 +316,42 @@
         }
 
         /* Mobile navbar adjustments */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0 12px;
-            }
-            /* Hide the long company subtitle; keep the main logo name */
-            .branding > div:last-child {
-                display: none;
-            }
-            /* Keep date visible, just smaller */
-            .date-display {
-                font-size: 0.7rem;
-                padding: 4px 8px;
-                gap: 4px;
-                white-space: nowrap;
-            }
-            /* Hide user role text (Admin/Finance Manager), keep avatar & logout */
-            .user-info {
-                display: none;
-            }
-            .user-profile {
-                padding: 4px;
-            }
-            .logout-btn {
-                padding: 4px;
-                margin-left: -6px;
-            }
-            .navbar-right {
-                gap: 4px;
-            }
-        }
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 12px;
+    }
+    /* Hide the long company subtitle; keep the main logo name */
+    .branding > div:last-child {
+        display: none;
+    }
+    /* Keep date visible, just smaller */
+    .date-display {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        gap: 4px;
+        white-space: nowrap;
+    }
+    /* Hide user role text, keep avatar & logout */
+    .user-info {
+        display: none;
+    }
+    .user-profile {
+        padding: 4px;
+    }
+    .logout-btn {
+        padding: 4px;
+        margin-left: -6px;
+    }
+    .navbar-right {
+        gap: 4px;
+    }
+}
 
+/* Make all tables inside main content scrollable */
+.main-content .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
     </style>
 </head>
 <body>

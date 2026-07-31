@@ -27,7 +27,8 @@
                 <strong>{{ group.category }}</strong>
                 <span class="float-end text-muted">AFN {{ group.total|floatformat:0 }}</span>
             </div>
-            <div class="card-body p-0">
+            <!-- ✅ FIXED: table-responsive added -->
+            <div class="card-body p-0 table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
