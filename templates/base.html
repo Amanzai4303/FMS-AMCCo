@@ -313,36 +313,40 @@
             .main-content.sidebar-expanded {
                 margin-left: var(--sidebar-width-expanded);
             }
+        }
 
-        /* Mobile adjustments for navbar */
+        /* Mobile navbar adjustments */
         @media (max-width: 768px) {
             .navbar {
                 padding: 0 12px;
             }
+            /* Hide the long company subtitle; keep the main logo name */
             .branding > div:last-child {
-                display: none;            /* hide "Arman Maihan Construction Co." subtitle on mobile */
+                display: none;
             }
+            /* Keep date visible, just smaller */
             .date-display {
                 font-size: 0.7rem;
                 padding: 4px 8px;
                 gap: 4px;
                 white-space: nowrap;
             }
+            /* Hide user role text (Admin/Finance Manager), keep avatar & logout */
             .user-info {
-                display: none;            /* hide "Admin" text, keep only avatar */
+                display: none;
             }
             .user-profile {
                 padding: 4px;
             }
             .logout-btn {
                 padding: 4px;
-                margin-left: -6px;        /* slightly overlap for compactness */
+                margin-left: -6px;
             }
             .navbar-right {
                 gap: 4px;
             }
-}
         }
+
     </style>
 </head>
 <body>
