@@ -12,7 +12,7 @@ from .models import (
     Transaction, TransactionAttachment
 )
 from .forms import ProjectForm, TransactionForm
-from .utils import get_afghan_date
+from .utils import get_afghan_date, link_callback
 
 
 # ---------- HELPERS ----------
@@ -456,7 +456,9 @@ def report_pdf(request):
     filename = f"AMCC_Report_{report_type}.pdf"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    pisa_status = pisa.CreatePDF(html_string, dest=response)
+    from .pdf_fonts import link_callback
+
+    pisa_status = pisa.CreatePDF(html_string, dest=response, link_callback=link_callback)
     if pisa_status.err:
         return HttpResponse('We had some errors <pre>' + html_string + '</pre>')
     return response
