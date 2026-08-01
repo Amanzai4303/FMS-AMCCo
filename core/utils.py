@@ -1,8 +1,6 @@
 # core/utils.py
 import jdatetime
 from datetime import date, datetime
-from pathlib import Path
-from django.conf import settings
 
 
 def get_afghan_date():
@@ -33,14 +31,3 @@ def gregorian_to_afghan_date(greg_date):
             return str(greg_date)
     
     return str(greg_date)
-
-
-def link_callback(uri, rel):
-    """
-    Convert font URIs to local filesystem paths for xhtml2pdf.
-    """
-    if 'NotoNaskhArabic' in uri:
-        # Point to the font file in the static/fonts folder
-        font_path = settings.BASE_DIR / 'static' / 'fonts' / 'NotoNaskhArabic-Regular.ttf'
-        return str(font_path)
-    return uri
