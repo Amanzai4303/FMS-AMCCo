@@ -134,10 +134,6 @@ class Transaction(models.Model):
             raise ValidationError({
                 'category': 'Category is required for Cash OUT transactions.'
         })
-        if self.amount and self.amount <= 0:
-            raise ValidationError({
-                'amount': 'Amount must be a positive number.'
-        })
 
 
 class TransactionAttachment(models.Model):
