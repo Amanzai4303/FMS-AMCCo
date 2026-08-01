@@ -34,7 +34,14 @@ def dashboard(request):
     recent_txns = Transaction.objects.select_related('project', 'category') \
                        .order_by('-date', '-created_at')[:5]
 
-    chart_projects = sorted(all_projects, key=lambda p: abs(p.profit_loss), reverse=True)[:5]
+    # Filter for active and on_hold projects only
+    chart_projects = [
+        p for p in all_projects
+        if p.status in ('active', 'on_hold')
+    ]
+    # Keep the top 5 by absolute profit/loss (same as before)
+    chart_projects = sorted(chart_projects, key=lambda p: abs(p.profit_loss), reverse=True)[:5]
+
     chart_data = []
     for proj in chart_projects:
         budget = proj.budget if proj.budget > 0 else 1
@@ -69,7 +76,6 @@ def dashboard(request):
         'chart_data': chart_data,
     }
     return render(request, 'dashboard.html', context)
-
 
 # ========== PROJECTS ==========
 @login_required
