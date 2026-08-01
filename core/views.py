@@ -456,8 +456,6 @@ def report_pdf(request):
     filename = f"AMCC_Report_{report_type}.pdf"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-    from .pdf_fonts import link_callback
-
     pisa_status = pisa.CreatePDF(html_string, dest=response, link_callback=link_callback)
     if pisa_status.err:
         return HttpResponse('We had some errors <pre>' + html_string + '</pre>')
