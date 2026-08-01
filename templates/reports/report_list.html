@@ -102,7 +102,7 @@
 
     <!-- Profit/Loss Report -->
     <div class="tab-pane fade {% if report_type == 'profit_loss' %}show active{% endif %}" id="profit_loss" role="tabpanel">
-        <form method="get" class="row g-3 mb-4" action="{% url 'report_list' %}">
+                <form method="get" class="row g-3 mb-4" action="{% url 'report_list' %}">
             <input type="hidden" name="type" value="profit_loss">
             <div class="col-md-3">
                 <label class="form-label">Project</label>
@@ -112,6 +112,14 @@
                         <option value="{{ p.id }}" {% if selected_project and selected_project.id == p.id %}selected{% endif %}>{{ p.code }}</option>
                     {% endfor %}
                 </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">From Date</label>
+                <input type="date" name="from_date" class="form-control" value="{{ from_date|default:'' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">To Date</label>
+                <input type="date" name="to_date" class="form-control" value="{{ to_date|default:'' }}">
             </div>
             <div class="col-md-3 align-self-end">
                 <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Filter</button>

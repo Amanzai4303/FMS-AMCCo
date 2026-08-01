@@ -39,7 +39,7 @@ class TransactionForm(forms.ModelForm):
         ]
         widgets = {
             'project': forms.Select(attrs={'class': 'form-select'}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'AFN amount'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'AFN amount', 'min': '0.01', 'step': '0.01'}),
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'payment_method': forms.Select(attrs={'class': 'form-select'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Optional description'}),

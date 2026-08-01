@@ -58,34 +58,32 @@
 <div class="row mt-4">
     <div class="col-12">
         <div class="card shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Project Profit / Loss Overview</h5>
-            </div>
-            <div class="card-body">
-                {% if chart_data %}
-                    {% for item in chart_data %}
-                    <div class="d-flex align-items-center mb-2">
-                        <div style="width: 120px; font-size: 0.85rem; font-weight: 500;">{{ item.code }}</div>
-                        <div class="flex-grow-1 mx-3">
-                            <div class="progress" style="height: 22px; background: #f1f1f1;">
-                                <div class="progress-bar {{ item.bar_color }}" 
-                                     role="progressbar" 
-                                     style="width: {{ item.bar_width|floatformat:0 }}%;" 
-                                     aria-valuenow="{{ item.profit_loss }}" 
-                                     aria-valuemin="0" 
-                                </div>
-                            </div>
-                        </div>
-                        <div style="width: 100px; text-align: right; font-weight: 600;" class="{{ item.text_color }}">
-                            AFN {{ item.profit_loss|floatformat:0 }}
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Project Profit / Loss Overview</h5>
+    </div>
+    <div class="card-body chart-card-body">
+        {% if chart_data %}
+            {% for item in chart_data %}
+            <div class="chart-item mb-2">
+                <div class="project-code">{{ item.code }}</div>
+                <div class="progress-wrapper">
+                    <div class="progress" style="height: 22px; background: #f1f1f1;">
+                        <div class="progress-bar {{ item.bar_color }}" 
+                             role="progressbar" 
+                             style="width: {{ item.bar_width|floatformat:0 }}%;">
                         </div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-muted text-center">No project data yet.</p>
-                {% endif %}
+                </div>
+                <div class="amount {{ item.text_color }}">
+                    AFN {{ item.profit_loss|floatformat:0 }}
+                </div>
             </div>
-        </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted text-center">No project data yet.</p>
+        {% endif %}
+    </div>
+</div>
     </div>
 </div>
 <div class="row g-4 mt-2">

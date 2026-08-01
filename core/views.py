@@ -361,15 +361,22 @@ def report_list(request):
         profit_data = []
         total_budget = total_income_all = total_expenses_all = 0
         for proj in projects_qs:
-            income = proj.transactions.filter(type='IN').aggregate(s=Sum('amount'))['s'] or 0
-            expenses = proj.transactions.filter(type='OUT').aggregate(s=Sum('amount'))['s'] or 0
+            # Start with all transactions for the project
+            base_txns = proj.transactions.all()
+            if from_date:
+                base_txns = base_txns.filter(date__gte=from_date)
+            if to_date:
+                base_txns = base_txns.filter(date__lte=to_date)
+
+            income = base_txns.filter(type='IN').aggregate(s=Sum('amount'))['s'] or 0
+            expenses = base_txns.filter(type='OUT').aggregate(s=Sum('amount'))['s'] or 0
             profit_data.append({
                 'code': proj.code,
                 'name': proj.name,
                 'budget': proj.budget,
                 'income': income,
                 'expenses': expenses,
-                'profit_loss': income - expenses,  # FIXED
+                'profit_loss': income - expenses,
             })
             total_budget += proj.budget
             total_income_all += income
@@ -379,7 +386,7 @@ def report_list(request):
         context['total_budget'] = total_budget
         context['total_income_all'] = total_income_all
         context['total_expenses_all'] = total_expenses_all
-        context['net_all'] = total_income_all - total_expenses_all  # FIXED
+        context['net_all'] = total_income_all - total_expenses_all
 
     return render(request, 'reports/report_list.html', context)
 
