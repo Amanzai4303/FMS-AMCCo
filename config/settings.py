@@ -19,7 +19,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
+
+    'dashboard',
+    'projects',
+    'finance',
+    'expenses',
+    'reports',
+    'common',
 ]
 
 MIDDLEWARE = [
@@ -45,7 +51,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'core.context_processors.afghan_date',
+                'common.context_processors.afghan_date',
             ],
         },
     },

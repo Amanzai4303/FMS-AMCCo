@@ -31,3 +31,7 @@ def gregorian_to_afghan_date(greg_date):
             return str(greg_date)
     
     return str(greg_date)
+
+# common/utils.py
+def is_admin(user):
+    return user.is_superuser
