@@ -7,6 +7,7 @@ from common.utils import is_admin
 from .models import Transaction, TransactionAttachment
 from .forms import TransactionForm
 from projects.models import Project
+from common.utils import is_admin
 
 @login_required
 def cashin_list(request):
@@ -48,6 +49,7 @@ def cashin_create(request):
     })
 
 @login_required
+@user_passes_test(is_admin)
 def cashin_edit(request, pk):
     txn = get_object_or_404(Transaction, pk=pk, type='IN')
     if request.method == 'POST':
@@ -110,6 +112,7 @@ def cashout_create(request):
     })
 
 @login_required
+@user_passes_test(is_admin)
 def cashout_edit(request, pk):
     txn = get_object_or_404(Transaction, pk=pk, type='OUT')
     if request.method == 'POST':
