@@ -1,3 +1,4 @@
+# config/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -11,9 +12,11 @@ urlpatterns = [
     path('finance/', include('finance.urls')),
     path('expenses/', include('expenses.urls')),
     path('reports/', include('reports.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(
+        template_name='registration/login.html'
+    ), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve static files in all environments (including production)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
