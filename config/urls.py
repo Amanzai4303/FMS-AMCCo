@@ -18,5 +18,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 
-# Serve static files in all environments (including production)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# Serve media files (needed for file uploads in production)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

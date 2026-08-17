@@ -12,13 +12,12 @@ DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 INSTALLED_APPS = [
-    'django.contrib.admin', # enables django admin panel.
-    'django.contrib.auth', # provides authentication and authorization features for user management.
-    'django.contrib.contenttypes',# provides a framework for handling different types of content in the application.
-    'django.contrib.sessions', # provides session management for user authentication and authorization.
-    'django.contrib.messages', # shows temporary messages to users, such as success or error messages.
-    'django.contrib.staticfiles', # provides a framework for managing static files, such as CSS and JavaScript files.
-
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'dashboard',
     'projects',
     'finance',
@@ -28,14 +27,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware', # This adds several security-related protections to your Django application.
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Its main purpose is to help Django serve static files directly.
-    'django.contrib.sessions.middleware.SessionMiddleware', # This middleware enables session management in Django,
-    'django.middleware.common.CommonMiddleware',# This middleware provides several useful features for handling common tasks in web applications, such as URL normalization, content type handling, and caching.
-    'django.middleware.csrf.CsrfViewMiddleware',# This middleware provides protection against Cross-Site Request Forgery (CSRF) attacks by adding a CSRF token to each form submitted by the user.
-    'django.contrib.auth.middleware.AuthenticationMiddleware',# This middleware enables user authentication in Django, allowing users to log in and access protected resources.
-    'django.contrib.messages.middleware.MessageMiddleware',# This middleware enables the use of temporary messages in Django
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',# This middleware provides protection against clickjacking attacks by adding an X-Frame-Options header to HTTP responses, which prevents the page from being embedded in an iframe on another site.
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls' #Go to the config project package and use its urls.py file as the main URL configuration.
@@ -72,9 +71,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage' #This tells Django to use WhiteNoise to serve static files
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kabul'
 USE_I18N = True # It allows your application to support multiple languages if you later want something like: eng, dari, pashto
@@ -83,6 +79,7 @@ USE_TZ = True # application can correctly handle dates across different location
 STATIC_URL = '/static/' #This defines the URL prefix used to access static files.  /static/js/app.js
 STATICFILES_DIRS = [BASE_DIR / 'static']  # "Look inside my project's static folder for additional static files."
 STATIC_ROOT = BASE_DIR / 'staticfiles' #STATIC_ROOT tells Django where to collect all static files for deployment.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage' #This tells Django to use WhiteNoise to serve static files
 
 MEDIA_URL = '/media/' #This defines the URL prefix for user-uploaded files.
 MEDIA_ROOT = BASE_DIR / 'media' #This tells Django where to physically store uploaded files.
